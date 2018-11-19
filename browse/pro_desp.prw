@@ -16,7 +16,7 @@ Function PRO_DESP()
 	
 	oBrowse := FWMBrowse():New()
 	oBrowse:SetAlias('ZZD')
-	oBrowse:SetDescription('Cadastro de Categoria')
+	oBrowse:SetDescription('Inclusão de despesa')
 	
 	oBrowse:Activate()
 
