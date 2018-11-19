@@ -1,6 +1,7 @@
 #INCLUDE 'PROTHEUS.CH'
 #INCLUDE 'FWMVCDEF.CH'
 
+
 //-------------------------------------------------------------------
 /*/{Protheus.doc} PRO_DESP
 Exemplo de montagem da modelo e interface para um tabela em MVC
@@ -11,72 +12,97 @@ Exemplo de montagem da modelo e interface para um tabela em MVC
 /*/
 //-------------------------------------------------------------------
 
+
+
 Function PRO_DESP()
 	Local oBrowse
 	
-	oBrowse := FWMBrowse():New()
-	oBrowse:SetAlias('ZZD')
-	oBrowse:SetDescription('Cadastro de Categoria')
-	
+	oBrowse := FWmBrowse():New()
+	oBrowse:SetAlias( 'ZZY' )
+	oBrowse:SetDescription( 'Controle de Despesa Pessoal' )
 	oBrowse:Activate()
 
 Return NIL
-//-------------------------------------------------------------------
+
 Static Function MenuDef()
+
 	Local aRotina := {}
 	
-	ADD OPTION aRotina TITLE 'Visualizar' ACTION 'VIEWDEF.PRO_DESP' OPERATION 2 ACCESS 0
-	ADD OPTION aRotina TITLE 'Incluir'    ACTION 'VIEWDEF.PRO_DESP' OPERATION 3 ACCESS 0
-	ADD OPTION aRotina TITLE 'Alterar'    ACTION 'VIEWDEF.PRO_DESP' OPERATION 4 ACCESS 0
-	ADD OPTION aRotina TITLE 'Excluir'    ACTION 'VIEWDEF.PRO_DESP' OPERATION 5 ACCESS 0
-	ADD OPTION aRotina TITLE 'Imprimir'   ACTION 'VIEWDEF.PRO_DESP' OPERATION 8 ACCESS 0
+	ADD OPTION aRotina Title 'Visualizar' Action 'VIEWDEF.PRO_DESP' OPERATION 2 ACCESS 0
+	ADD OPTION aRotina Title 'Incluir'    Action 'VIEWDEF.PRO_DESP' OPERATION 3 ACCESS 0
+	ADD OPTION aRotina Title 'Alterar'    Action 'VIEWDEF.PRO_DESP' OPERATION 4 ACCESS 0
+	ADD OPTION aRotina Title 'Excluir'    Action 'VIEWDEF.PRO_DESP' OPERATION 5 ACCESS 0
+	ADD OPTION aRotina Title 'Imprimir'   Action 'VIEWDEF.PRO_DESP' OPERATION 8 ACCESS 0
+	ADD OPTION aRotina Title 'Copiar'     Action 'VIEWDEF.PRO_DESP' OPERATION 9 ACCESS 0
 
 Return aRotina
-//-------------------------------------------------------------------
-Static Function ModelDef()
 
-	// Cria a estrutura a ser usada no Modelo de Dados
-	Local oStruZZD := FWFormStruct( 1, 'ZZD', /*bAvalCampo*/,/*lViewUsado*/ )
+Static Function ModelDef()
+	
+	Local oStruZZY := FWFormStruct( 1, 'ZZY', /*bAvalCampo*/, /*lViewUsado*/ )
+//	Local oStruZZR := FWFormStruct( 1, 'ZZR', /*bAvalCampo*/, /*lViewUsado*/ )
+	Local oStruZZD := FWFormStruct( 1, 'ZZD', /*bAvalCampo*/, /*lViewUsado*/ )
 	Local oModel
 	
-	// Cria o objeto do Modelo de Dados
-	oModel := MPFormModel():New('CATEGORIA', /*bPreValidacao*/, /*bPosValidacao*/, /*bCommit*/, /*bCancel*/ )
+	oModel := MPFormModel():New( 'DESPESA', /*bPreValidacao*/, /*bPosValidacao*/, /*bCommit*/, /*bCancel*/ )
 	
-	// Adiciona ao modelo uma estrutura de formulário de edição por campo
-	oModel:AddFields( 'ZZDMASTER', /*cOwner*/, oStruZZD, /*bPreValidacao*/, /*bPosValidacao*/, /*bCarga*/ )
+	oModel:AddFields( 'ZZYMASTER', /*cOwner*/, oStruZZY )
 	
-	// Adiciona a descricao do Modelo de Dados
-	oModel:SetDescription( 'Modelo de Categoria' )
+//	oModel:AddGrid( 'ZZRDETAIL', 'ZZYMASTER', oStruZZR, /*bLinePre*/, /*bLinePost*/, /*bPreVal*/, /*bPosVal*/, /*BLoad*/ )
+	oModel:AddGrid( 'ZZDDETAIL', 'ZZYMASTER', oStruZZD, /*bLinePre*/, /*bLinePost*/, /*bPreVal*/, /*bPosVal*/, /*BLoad*/ )
 	
-	// Adiciona a descricao do Componente do Modelo de Dados
-	oModel:GetModel( 'ZZDMASTER' ):SetDescription( 'Dados de Categoria' )
+	oModel:AddCalc( 'TOTALDESP', 'ZZYMASTER', 'ZZDDETAIL', 'ZZD_VALOR', 'ZZD__TOTAL', 'SUM',,,'Total Despesas')
+	
+//	oModel:SetRelation( 'ZZRDETAIL', { { 'ZZR_FILIAL', 'xFilial( "ZZR" )' },{ 'ZZR_IDPES' , 'ZZY_IDPES'  } } , ZZR->( IndexKey( 2 ) )  )	
+	oModel:SetRelation( 'ZZDDETAIL', { { 'ZZD_FILIAL', 'xFilial( "ZZD" )' },{ 'ZZD_IDPES' , 'ZZY_IDPES'  } } , ZZR->( IndexKey( 2 ) )  )
+	
+	
+	oModel:SetDescription( 'Modelo de Controle Financeiro Pessoal' )
+	
+	oModel:GetModel( 'ZZYMASTER' ):SetDescription( 'Dados da Pessoa' )
+//	oModel:GetModel( 'ZZRDETAIL' ):SetDescription( 'Dados das Receitas'  )
+	oModel:GetModel( 'ZZDDETAIL' ):SetDescription( 'Dados das Despeas'  )
+	
 
 Return oModel
-//-------------------------------------------------------------------
+
+
 Static Function ViewDef()
 
-	// Cria um objeto de Modelo de Dados baseado no ModelDef do fonte informado
-	// Cria a estrutura a ser usada na View
-	Local oModel   := FWLoadModel( 'PRO_DESP' )
+	Local oStruZZY := FWFormStruct( 2, 'ZZY' )
+//	Local oStruZZR := FWFormStruct( 2, 'ZZR' )
 	Local oStruZZD := FWFormStruct( 2, 'ZZD' )
-	Local oView
-	Local cCampos := {}
 
-	// Cria o objeto de View
+	Local oModel   := FWLoadModel( 'PRO_DESP' )
+	Local oView
+	
 	oView := FWFormView():New()
 	
-	// Define qual o Modelo de dados será utilizado
 	oView:SetModel( oModel )
 	
-	//Adiciona no nosso View um controle do tipo FormFields(antiga enchoice)
-	oView:AddField( 'VIEW_ZZD', oStruZZD, 'ZZDMASTER' )
+	oView:AddField( 'VIEW_ZZY', oStruZZY, 'ZZYMASTER' )
 	
-	// Criar um "box" horizontal para receber algum elemento da view
-	oView:CreateHorizontalBox( 'TELA' , 100 )
+//	oView:AddGrid(  'VIEW_ZZR', oStruZZR, 'ZZRDETAIL' )
+	oView:AddGrid(  'VIEW_ZZD', oStruZZD, 'ZZDDETAIL' )
 	
-	// Relaciona o ID da View com o "box" para exibicao
-	oView:SetOwnerView( 'VIEW_ZZD', 'TELA' )
-	 
-
+	oCalc1 := FWCalcStruct( oModel:GetModel( 'TOTALDESP') )
+	
+	oView:AddField( 'VIEW_CALC', oCalc1, 'TOTALDESP' )
+	
+	oView:CreateHorizontalBox( 'EMCIMA' , 15 )
+	oView:CreateHorizontalBox( 'MEIO'   , 70 )
+	oView:CreateHorizontalBox( 'EMBAIXO', 15 )
+	
+	oView:SetOwnerView( 'VIEW_ZZY', 'EMCIMA'   )
+//	oView:SetOwnerView( 'VIEW_ZZR', 'MEIO'     )
+	oView:SetOwnerView( 'VIEW_ZZD', 'MEIO'  )
+	oView:SetOwnerView( 'VIEW_CALC', 'EMBAIXO' )
+	
+	oView:EnableTitleView( 'VIEW_ZZY', "Pessoa" )
+//	oView:EnableTitleView( 'VIEW_ZZR', "Receitas" )
+	oView:EnableTitleView( 'VIEW_ZZD', "Despesas" )
+	
 Return oView
+
+
 

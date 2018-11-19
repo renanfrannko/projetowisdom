@@ -3,7 +3,7 @@
 
 
 //-------------------------------------------------------------------
-/*/{Protheus.doc} PRO_CAT
+/*/{Protheus.doc} PRO_REC
 Exemplo de montagem da modelo e interface para um tabela em MVC
 
 @author BEATRIZ DE SOUZA, LETICIA CAMPOS, MARCIO SANTOS, RENAN FRANCO
@@ -19,7 +19,7 @@ Function PRO_REC()
 	
 	oBrowse := FWmBrowse():New()
 	oBrowse:SetAlias( 'ZZX' )
-	oBrowse:SetDescription( 'Controle Financeiro Pessoal' )
+	oBrowse:SetDescription( 'Controle de Receita Pessoal' )
 	oBrowse:Activate()
 
 Return NIL
@@ -44,13 +44,15 @@ Static Function ModelDef()
 //	Local oStruZZD := FWFormStruct( 1, 'ZZD', /*bAvalCampo*/, /*lViewUsado*/ )
 	Local oModel
 	
-	oModel := MPFormModel():New( 'CFINFPES', /*bPreValidacao*/, /*bPosValidacao*/, /*bCommit*/, /*bCancel*/ )
+	oModel := MPFormModel():New( 'RECEITA', /*bPreValidacao*/, /*bPosValidacao*/, /*bCommit*/, /*bCancel*/ )
 	
 	oModel:AddFields( 'ZZXMASTER', /*cOwner*/, oStruZZX )
 	
 	oModel:AddGrid( 'ZZRDETAIL', 'ZZXMASTER', oStruZZR, /*bLinePre*/, /*bLinePost*/, /*bPreVal*/, /*bPosVal*/, /*BLoad*/ )
 	
 //	oModel:AddGrid( 'ZZDDETAIL', 'ZZXMASTER', oStruZZD, /*bLinePre*/, /*bLinePost*/, /*bPreVal*/, /*bPosVal*/, /*BLoad*/ )
+
+	oModel:AddCalc( 'TOTALREC', 'ZZXMASTER', 'ZZRDETAIL', 'ZZR_VALOR', 'ZZR__TOTAL', 'SUM',,,'Total Receitas')
 	
 	oModel:SetRelation( 'ZZRDETAIL', { { 'ZZR_FILIAL', 'xFilial( "ZZR" )' },{ 'ZZR_IDPES' , 'ZZX_IDPES'  } } , ZZR->( IndexKey( 2 ) )  )
 	
@@ -84,14 +86,20 @@ Static Function ViewDef()
 	
 	oView:AddGrid(  'VIEW_ZZR', oStruZZR, 'ZZRDETAIL' )
 //	oView:AddGrid(  'VIEW_ZZD', oStruZZD, 'ZZDDETAIL' )
+
+	oCalc1 := FWCalcStruct( oModel:GetModel( 'TOTALREC') )
 	
-	oView:CreateHorizontalBox( 'EMCIMA' , 20 )
-	oView:CreateHorizontalBox( 'MEIO'   , 40 )
-	oView:CreateHorizontalBox( 'EMBAIXO', 40 )
+	oView:AddField( 'VIEW_CALC', oCalc1, 'TOTALREC' )
+	
+	
+	oView:CreateHorizontalBox( 'EMCIMA' , 15 )
+	oView:CreateHorizontalBox( 'MEIO'   , 70 )
+	oView:CreateHorizontalBox( 'EMBAIXO', 15 )
 	
 	oView:SetOwnerView( 'VIEW_ZZX', 'EMCIMA'   )
 	oView:SetOwnerView( 'VIEW_ZZR', 'MEIO'     )
 //	oView:SetOwnerView( 'VIEW_ZZD', 'EMBAIXO'  )
+	oView:SetOwnerView( 'VIEW_CALC', 'EMBAIXO' )
 	
 	oView:EnableTitleView( 'VIEW_ZZX', "Pessoa" )
 	oView:EnableTitleView( 'VIEW_ZZR', "Receitas" )
