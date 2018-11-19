@@ -3,7 +3,7 @@
 
 
 //-------------------------------------------------------------------
-/*/{Protheus.doc} PRO_REC
+/*/{Protheus.doc} PRO_REC ----
 Exemplo de montagem da modelo e interface para um tabela em MVC
 
 @author BEATRIZ DE SOUZA, LETICIA CAMPOS, MARCIO SANTOS, RENAN FRANCO
