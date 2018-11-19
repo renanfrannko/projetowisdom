@@ -17,9 +17,11 @@ Exemplo de montagem da modelo e interface para um tabela em MVC
 Function PRO_DESP()
 	Local oBrowse
 	
+
 	oBrowse := FWmBrowse():New()
 	oBrowse:SetAlias( 'ZZY' )
 	oBrowse:SetDescription( 'Controle de Despesa Pessoal' )
+
 	oBrowse:Activate()
 
 Return NIL
