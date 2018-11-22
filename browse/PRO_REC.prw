@@ -65,6 +65,7 @@ Static Function ModelDef()
 	oModel:GetModel( 'ZZRDETAIL' ):SetDescription( 'Dados das Receitas'  )
 //	oModel:GetModel( 'ZZDDETAIL' ):SetDescription( 'Dados das Despeas'  )
 	
+	
 
 Return oModel
 
@@ -90,8 +91,7 @@ Static Function ViewDef()
 	oCalc1 := FWCalcStruct( oModel:GetModel( 'TOTALREC') )
 	
 	oView:AddField( 'VIEW_CALC', oCalc1, 'TOTALREC' )
-	
-	
+
 	oView:CreateHorizontalBox( 'EMCIMA' , 15 )
 	oView:CreateHorizontalBox( 'MEIO'   , 70 )
 	oView:CreateHorizontalBox( 'EMBAIXO', 15 )
@@ -107,5 +107,5 @@ Static Function ViewDef()
 	
 Return oView
 
-
+//-------------------------------------------------------------------
 

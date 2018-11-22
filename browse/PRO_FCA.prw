@@ -1,0 +1,132 @@
+#INCLUDE 'PROTHEUS.CH'
+#INCLUDE 'FWMVCDEF.CH'
+
+
+//-------------------------------------------------------------------
+/*/{Protheus.doc} PRO_FCA ---- teste git
+Exemplo de montagem da modelo e interface para um tabela em MVC
+
+@author BEATRIZ DE SOUZA, LETICIA CAMPOS, MARCIO SANTOS, RENAN FRANCO
+@since 16/11/2018
+@version P1
+/*/
+//-------------------------------------------------------------------
+
+
+
+Function PRO_FCA()
+	Local oBrowse
+	
+	oBrowse := FWmBrowse():New()
+	oBrowse:SetAlias( 'ZZP' )
+	oBrowse:SetDescription( 'Controle de Receita Pessoal' )
+	oBrowse:Activate()
+
+Return NIL
+
+Static Function MenuDef()
+
+	Local aRotina := {}
+	
+	ADD OPTION aRotina Title 'Visualizar' Action 'VIEWDEF.PRO_FCA' OPERATION 2 ACCESS 0
+	ADD OPTION aRotina Title 'Imprimir'   Action 'VIEWDEF.PRO_FCA' OPERATION 8 ACCESS 0
+
+Return aRotina
+
+Static Function ModelDef()
+	
+	Local oStruZZP := FWFormStruct( 1, 'ZZP', /*bAvalCampo*/, /*lViewUsado*/ )
+	Local oStruZZR := FWFormStruct( 1, 'ZZR', /*bAvalCampo*/, /*lViewUsado*/ )
+	Local oStruZZD := FWFormStruct( 1, 'ZZD', /*bAvalCampo*/, /*lViewUsado*/ )
+	Local oModel
+	Local oMdlCalc
+
+	
+	oModel := MPFormModel():New( 'FLUXO', /*bPreValidacao*/, /*bPosValidacao*/, /*bCommit*/, /*bCancel*/ )
+	
+	oModel:AddFields( 'ZZPMASTER', /*cOwner*/, oStruZZP )
+	
+	oModel:AddGrid( 'ZZRDETAIL', 'ZZPMASTER', oStruZZR, /*bLinePre*/, /*bLinePost*/, /*bPreVal*/, /*bPosVal*/, /*BLoad*/ )
+	
+	oModel:AddGrid( 'ZZDDETAIL', 'ZZPMASTER', oStruZZD, /*bLinePre*/, /*bLinePost*/, /*bPreVal*/, /*bPosVal*/, /*BLoad*/ )
+
+	oModel:AddCalc( 'TOTALREC', 'ZZPMASTER', 'ZZRDETAIL', 'ZZR_VALOR', 'ZZR__TOTAL', 'SUM',,,'Total Receitas')
+	oModel:AddCalc( 'TOTALDESP', 'ZZPMASTER', 'ZZDDETAIL', 'ZZD_VALOR', 'ZZD__TOTAL', 'SUM',,,'Total Despesas')
+	
+ 	oModel:AddCalc( 'TOTALFCA', 'ZZPMASTER', 'ZZDDETAIL', 'ZZD_VALOR', 'ZZP__TOTAL', 'FORMULA',,,'Total',;
+ 		{|oModel| oModel:GetValue("TOTALREC","ZZR__TOTAL")-oModel:GetValue("TOTALDESP","ZZD__TOTAL") })
+ 	
+	oModel:SetRelation( 'ZZRDETAIL', { { 'ZZR_FILIAL', 'xFilial( "ZZR" )' },{ 'ZZR_IDPES' , 'ZZP_IDPES'  } } , ZZR->( IndexKey( 2 ) )  )
+	
+	oModel:SetRelation( 'ZZDDETAIL', { { 'ZZD_FILIAL', 'xFilial( "ZZD" )' },{ 'ZZD_IDPES' , 'ZZP_IDPES'  } } , ZZR->( IndexKey( 2 ) )  )
+	
+	
+	oModel:SetDescription( 'Modelo de Controle Financeiro Pessoal' )
+	
+	oModel:GetModel( 'ZZPMASTER' ):SetDescription( 'Dados da Pessoa' )
+	oModel:GetModel( 'ZZRDETAIL' ):SetDescription( 'Dados das Receitas'  )
+	oModel:GetModel( 'ZZDDETAIL' ):SetDescription( 'Dados das Despeas'  )
+	
+
+Return oModel
+
+
+Static Function ViewDef()
+
+	Local oStruZZP := FWFormStruct( 2, 'ZZP' )
+	Local oStruZZR := FWFormStruct( 2, 'ZZR' )
+	Local oStruZZD := FWFormStruct( 2, 'ZZD' )
+
+	Local oModel   := FWLoadModel( 'PRO_FCA' )
+	Local oView
+	
+	oView := FWFormView():New()
+	
+	oView:SetModel( oModel )
+	
+	oView:AddField( 'VIEW_ZZP', oStruZZP, 'ZZPMASTER' )
+	
+	oView:AddGrid(  'VIEW_ZZR', oStruZZR, 'ZZRDETAIL' )
+	oView:AddGrid(  'VIEW_ZZD', oStruZZD, 'ZZDDETAIL' )
+
+	oCalc1 := FWCalcStruct( oModel:GetModel( 'TOTALREC') )
+	oCalc2 := FWCalcStruct( oModel:GetModel( 'TOTALDESP') )
+	oCalc3 := FWCalcStruct( oModel:GetModel( 'TOTALFCA') )
+	
+	oView:AddField( 'VIEW_CALC1', oCalc1, 'TOTALREC' )
+	oView:AddField( 'VIEW_CALC2', oCalc2, 'TOTALDESP' )
+	oView:AddField( 'VIEW_CALC3', oCalc3, 'TOTALFCA' )
+	
+	
+	oView:CreateHorizontalBox( 'EMCIMA' , 15 )
+	oView:CreateHorizontalBox( 'MEIO'   , 55 )
+	oView:CreateHorizontalBox( 'EMBAIXO', 15 )
+	oView:CreateHorizontalBox( 'RODAPE', 15 )
+	
+	oView:CreateVerticalBox( 'MEIO01', 50, 'MEIO' )
+	oView:CreateVerticalBox( 'MEIO02', 50, 'MEIO' )
+	
+	oView:CreateVerticalBox( 'EMBAIXO1', 50, 'EMBAIXO' )
+	oView:CreateVerticalBox( 'EMBAIXO2', 50, 'EMBAIXO' )
+	
+	oView:SetOwnerView( 'VIEW_ZZP', 'EMCIMA'   )
+	
+	oView:SetOwnerView( 'VIEW_ZZR', 'MEIO01'     )
+	oView:SetOwnerView( 'VIEW_ZZD', 'MEIO02'  )
+	
+	oView:SetOwnerView( 'VIEW_CALC1', 'EMBAIXO1' )
+	oView:SetOwnerView( 'VIEW_CALC2', 'EMBAIXO2' )
+	
+	oView:SetOwnerView( 'VIEW_CALC3', 'RODAPE' )
+	
+	oView:EnableTitleView( 'VIEW_ZZP', "Pessoa" )
+	oView:EnableTitleView( 'VIEW_ZZR', "Receitas" )
+	oView:EnableTitleView( 'VIEW_ZZD', "Despesas" )
+	
+	
+	
+Return oView
+	
+
+
+

@@ -16,11 +16,13 @@ Exemplo de montagem da modelo e interface para um tabela em MVC
 
 Function PRO_DESP()
 	Local oBrowse
+
 	
 
 	oBrowse := FWmBrowse():New()
 	oBrowse:SetAlias( 'ZZY' )
 	oBrowse:SetDescription( 'Controle de Despesa Pessoal' )
+
 
 	oBrowse:Activate()
 
@@ -29,6 +31,7 @@ Return NIL
 Static Function MenuDef()
 
 	Local aRotina := {}
+
 	
 	ADD OPTION aRotina Title 'Visualizar' Action 'VIEWDEF.PRO_DESP' OPERATION 2 ACCESS 0
 	ADD OPTION aRotina Title 'Incluir'    Action 'VIEWDEF.PRO_DESP' OPERATION 3 ACCESS 0
@@ -65,7 +68,6 @@ Static Function ModelDef()
 //	oModel:GetModel( 'ZZRDETAIL' ):SetDescription( 'Dados das Receitas'  )
 	oModel:GetModel( 'ZZDDETAIL' ):SetDescription( 'Dados das Despeas'  )
 	
-
 Return oModel
 
 
