@@ -40,7 +40,7 @@ Static Function ModelDef()
 	Local oModel
 	
 	// Cria o objeto do Modelo de Dados
-	oModel := MPFormModel():New('PESSOA', /*bPreValidacao*/, /*bPosValidacao*/, /*bCommit*/, /*bCancel*/ )
+	oModel := MPFormModel():New('PESSOA', /*bPreValidacao*/,  , , /*bCancel*/ )
 	
 	// Adiciona ao modelo uma estrutura de formulário de edição por campo
 	oModel:AddFields( 'ZZPMASTER', /*cOwner*/, oStruZZP, /*bPreValidacao*/, /*bPosValidacao*/, /*bCarga*/ )
@@ -50,6 +50,8 @@ Static Function ModelDef()
 	
 	// Adiciona a descricao do Componente do Modelo de Dados
 	oModel:GetModel( 'ZZPMASTER' ):SetDescription( 'Dados de Pessoa' )
+	
+	oModel:SetVldActivate( { |oModel| PodeAtivar( oModel ) } )
 
 Return oModel
 //-------------------------------------------------------------------
@@ -80,3 +82,68 @@ Static Function ViewDef()
 
 Return oView
 
+//------------------------------------------------------------------------
+
+Static function PodeAtivar( oModel )  
+	
+	Local aArea      := GetArea()
+	Local cQuery     := ''
+	Local cTmp       := ''
+	Local lRet       := .T.
+	Local nOperation := oModel:GetOperation()
+	
+	If nOperation == MODEL_OPERATION_DELETE .AND. lRet
+		
+		cTmp    := GetNextAlias()
+		
+		cQuery  := ""
+		cQuery  += "SELECT ZZP_IDPES FROM " + RetSqlName( 'ZZP' ) + " ZZP "
+		cQuery  += " WHERE EXISTS ( "
+		cQuery  += "       (SELECT 1 FROM " + RetSqlName( 'ZZX' ) + " ZZX "
+		cQuery  += "        WHERE ZZX_IDPES = ZZP_IDPES"
+		cQuery  += "          AND ZZX.D_E_L_E_T_ = ' ' ) "
+		cQuery  += "        UNION "
+		cQuery  += "       (SELECT 1 FROM " + RetSqlName( 'ZZY' ) + " ZZY "
+		cQuery  += "        WHERE ZZY_IDPES = ZZP_IDPES"
+		cQuery  += "          AND ZZY.D_E_L_E_T_ = ' ' ) )"
+		cQuery  += "   AND ZZP_IDPES = '" + ZZP->ZZP_IDPES  + "' "
+		cQuery  += "   AND ZZP.D_E_L_E_T_ = ' ' "
+
+ 				
+		dbUseArea( .T., "TOPCONN", TcGenQry( ,, cQuery ) , cTmp, .F., .T. )
+		
+		lRet := (cTmp)->( EOF() )
+		
+		(cTmp)->( dbCloseArea() )
+		
+		If lRet
+		cQuery  := ""
+		cQuery  += "SELECT ZZP_IDPES FROM " + RetSqlName( 'ZZP' ) + " ZZP "
+		cQuery  += " WHERE EXISTS ( "
+		cQuery  += "       (SELECT 1 FROM " + RetSqlName( 'ZZX' ) + " ZZX "
+		cQuery  += "        WHERE ZZX_IDPES = ZZP_IDPES"
+		cQuery  += "          AND ZZX.D_E_L_E_T_ = ' ' ) "
+		cQuery  += "        UNION "
+		cQuery  += "       (SELECT 1 FROM " + RetSqlName( 'ZZY' ) + " ZZY "
+		cQuery  += "        WHERE ZZY_IDPES = ZZP_IDPES"
+		cQuery  += "          AND ZZY.D_E_L_E_T_ = ' ' ) )"
+		cQuery  += "   AND ZZP_IDPES = '" + ZZP->ZZP_IDPES  + "' "
+		cQuery  += "   AND ZZP.D_E_L_E_T_ = ' ' "
+					
+			dbUseArea( .T., "TOPCONN", TcGenQry( ,, cQuery ) , cTmp, .F., .T. )
+			
+			lRet := (cTmp)->( EOF() )
+			
+			(cTmp)->( dbCloseArea() )
+			
+		EndIf
+		
+		If !lRet
+			Help( ,, 'HELP',, 'Esta Pessoa não pode ser excluido.', 1, 0)
+		EndIf
+		
+	EndIf
+	
+	RestArea( aArea )
+
+Return lRet
