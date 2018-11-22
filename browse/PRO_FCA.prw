@@ -3,8 +3,8 @@
 
 
 //-------------------------------------------------------------------
-/*/{Protheus.doc} PRO_FCA ---- teste git
-Exemplo de montagem da modelo e interface para um tabela em MVC
+/*/{Protheus.doc} PRO_FCA ---- 
+Fluxo de caixa
 
 @author BEATRIZ DE SOUZA, LETICIA CAMPOS, MARCIO SANTOS, RENAN FRANCO
 @since 16/11/2018
