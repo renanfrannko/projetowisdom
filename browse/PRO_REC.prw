@@ -91,8 +91,7 @@ Static Function ViewDef()
 	oCalc1 := FWCalcStruct( oModel:GetModel( 'TOTALREC') )
 	
 	oView:AddField( 'VIEW_CALC', oCalc1, 'TOTALREC' )
-	
-	
+
 	oView:CreateHorizontalBox( 'EMCIMA' , 15 )
 	oView:CreateHorizontalBox( 'MEIO'   , 70 )
 	oView:CreateHorizontalBox( 'EMBAIXO', 15 )
