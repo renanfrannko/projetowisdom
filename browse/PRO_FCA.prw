@@ -58,7 +58,7 @@ Static Function ModelDef()
  	
 	oModel:SetRelation( 'ZZRDETAIL', { { 'ZZR_FILIAL', 'xFilial( "ZZR" )' },{ 'ZZR_IDPES' , 'ZZP_IDPES'  } } , ZZR->( IndexKey( 2 ) )  )
 	
-	oModel:SetRelation( 'ZZDDETAIL', { { 'ZZD_FILIAL', 'xFilial( "ZZD" )' },{ 'ZZD_IDPES' , 'ZZP_IDPES'  } } , ZZR->( IndexKey( 2 ) )  )
+	oModel:SetRelation( 'ZZDDETAIL', { { 'ZZD_FILIAL', 'xFilial( "ZZD" )' },{ 'ZZD_IDPES' , 'ZZP_IDPES'  } } , ZZD->( IndexKey( 2 ) )  )
 	
 	
 	oModel:SetDescription( 'Modelo de Controle Financeiro Pessoal' )
