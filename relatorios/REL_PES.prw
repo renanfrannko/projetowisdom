@@ -3,7 +3,7 @@
 
 //-------------------------------------------------------------------
 /*/{Protheus.doc} REL_PES
-RelatÛrio de Listagem de Pessoas cadastradas, feito em TReport
+Relat√≥rio de Listagem de Pessoas cadastradas, feito em TReport
  @author BEATRIZ DE SOUZA, LETICIA CAMPOS, MARCIO SANTOS, RENAN FRANCO
 @since 19/11/2018
 @version P1
@@ -15,13 +15,16 @@ Function REL_PES()
 
     Pergunte("ZZP001",.F.) 
     
-    DEFINE REPORT oReport NAME "Listagem de Pessoas" TITLE "RelaÁ„o de Pessoas Cadastradas" PARAMETER "ZZP001"; 
+    DEFINE REPORT oReport NAME "Listagem de Pessoas" TITLE "Rela√ß√£o de Pessoas Cadastradas - em ordem Alfab√©tica" PARAMETER "ZZP001"; 
        ACTION {|oReport| PrintReport(oReport)}
        
-                DEFINE SECTION oZZP OF oReport TITLE "Pessoas" TABLES "ZZP" // TOTAL IN COLUMN // PAGE HEADER
-                DEFINE CELL NAME "ZZP_IDPES" OF oZZP ALIAS "ZZP"
-                DEFINE CELL NAME "ZZP_NOME" OF oZZP ALIAS "ZZP"
-                
+       DEFINE SECTION oZZP OF oReport TITLE "Pessoas" TABLES "ZZP" // TOTAL IN COLUMN // PAGE HEADER
+       		DEFINE CELL NAME "ZZP_IDPES" OF oZZP ALIAS "ZZP"
+       		DEFINE CELL NAME "ZZP_NOME" OF oZZP ALIAS "ZZP"
+       		
+       // Conta quantidade de itens dos pedidos e imprime somente no final da pagina
+       DEFINE FUNCTION FROM oZZP:Cell("ZZP_IDPES") FUNCTION COUNT END PAGE   		
+       		
     oReport:HideParamPage()    
     oReport:PrintDialog()
 Return
@@ -37,7 +40,7 @@ Static Function PrintReport(oReport)
         	BEGIN REPORT QUERY oReport:Section(1)
         
         	BeginSql alias cAlias
-        		SELECT ZZP_IDPES,ZZP_NOME
+        		SELECT ZZP_IDPES AS Codigo, ZZP_NOME AS Nome
         		FROM %table:ZZP% ZZP
         		WHERE ZZP_FILIAL = %xfilial:ZZP% AND ZZP.%notDel%
         		ORDER BY ZZP_FILIAL,ZZP_IDPES
