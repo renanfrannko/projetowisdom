@@ -36,10 +36,10 @@ Return aRotina
 Static Function ModelDef()
 	
 	Local oStruZZP := FWFormStruct( 1, 'ZZP', /*bAvalCampo*/, /*lViewUsado*/ )
-	Local oStruZZR := FWFormStruct( 1, 'ZZR', /*bAvalCampo*/, /*lViewUsado*/ )
-	Local oStruZZD := FWFormStruct( 1, 'ZZD', /*bAvalCampo*/, /*lViewUsado*/ )
+	Local oStruZZR := FWFormStruct( 1, 'ZZR', { |x| ALLTRIM(x) $ 'ZZR_IDCAT, ZZR_NCAT, ZZR_DATA, ZZR_VALOR, ZZR_DESCR' }, /*lViewUsado*/ )
+	Local oStruZZD := FWFormStruct( 1, 'ZZD', { |x| ALLTRIM(x) $ 'ZZD_IDCAT, ZZD_NCAT, ZZD_DATA, ZZD_VALOR, ZZD_DESCR' }, /*lViewUsado*/ )	
 	Local oModel
-	Local oMdlCalc
+	
 
 	
 	oModel := MPFormModel():New( 'FLUXO', /*bPreValidacao*/, /*bPosValidacao*/, /*bCommit*/, /*bCancel*/ )
@@ -67,6 +67,7 @@ Static Function ModelDef()
 	oModel:GetModel( 'ZZRDETAIL' ):SetDescription( 'Dados das Receitas'  )
 	oModel:GetModel( 'ZZDDETAIL' ):SetDescription( 'Dados das Despeas'  )
 	
+	oModel:SetVldActivate( { |oModel| PodeAtivar( oModel ) } )
 
 Return oModel
 
@@ -74,8 +75,8 @@ Return oModel
 Static Function ViewDef()
 
 	Local oStruZZP := FWFormStruct( 2, 'ZZP' )
-	Local oStruZZR := FWFormStruct( 2, 'ZZR' )
-	Local oStruZZD := FWFormStruct( 2, 'ZZD' )
+	Local oStruZZR := FWFormStruct( 2, 'ZZR', { |x| ALLTRIM(x) $ 'ZZR_IDCAT, ZZR_NCAT, ZZR_DATA, ZZR_VALOR, ZZR_DESCR' } )
+	Local oStruZZD := FWFormStruct( 2, 'ZZD', { |x| ALLTRIM(x) $ 'ZZD_IDCAT, ZZD_NCAT, ZZD_DATA, ZZD_VALOR, ZZD_DESCR' } )
 
 	Local oModel   := FWLoadModel( 'PRO_FCA' )
 	Local oView
@@ -126,7 +127,3 @@ Static Function ViewDef()
 	
 	
 Return oView
-	
-
-
-
