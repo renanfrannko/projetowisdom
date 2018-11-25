@@ -22,10 +22,11 @@ Function REL_DESP2()
        ACTION {|oReport| PrintReport(oReport)}
        
 	DEFINE SECTION oZZP OF oReport TITLE "Pessoa" TABLE "ZZP" // TOTAL IN COLUMN // PAGE HEADER
+	oZZP:SetHeaderSection(.F.) // define se imprime cabeçalho das células na quebra de seção
 	oZZP:SetPageBreak() // define a quebra de pagina, ou seja, o resultado de cada pessoa é apresentado em páginas separadas
 	
-		DEFINE CELL NAME "ZZP_IDPES" OF oZZP ALIAS "ZZP" TITLE "ID" 
-		DEFINE CELL NAME "ZZP_NOME"  OF oZZP ALIAS "ZZP" TITLE "Nome"
+		DEFINE CELL NAME "ZZP_IDPES" OF oZZP ALIAS "ZZP"
+		DEFINE CELL NAME "ZZP_NOME"  OF oZZP ALIAS "ZZP"
 		
 	DEFINE SECTION oZZD OF oZZP TITLE "Despesa" TABLE "ZZD"
 	
