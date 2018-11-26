@@ -3,8 +3,8 @@
 
 //-------------------------------------------------------------------
 /*/{Protheus.doc} REL_REC
-RelatÛrio de Listagem de Receitas x Categorias, feito em TReport
-VisualizaÁ„o È feito com quebra por Pessoas
+Relat√≥rio de Listagem de Receitas x Categorias, feito em TReport
+Visualiza√ß√£o √© feito com quebra por Pessoas
 @author BEATRIZ DE SOUZA, LETICIA CAMPOS, MARCIO SANTOS, RENAN FRANCO
 @since 25/11/2018
 @version P1
@@ -18,12 +18,12 @@ Function REL_REC()
 		
     Pergunte("ZZP001",.F.) 
     
-    DEFINE REPORT oReport NAME "Listagem de Receitas" TITLE "RelaÁ„o de Receitas Cadastradas por Categorias" PARAMETER "ZZP001"; 
+    DEFINE REPORT oReport NAME "Listagem de Receitas" TITLE "Rela√ß√£o de Receitas Cadastradas por Categorias" PARAMETER "ZZP001"; 
        ACTION {|oReport| PrintReport(oReport)}
        
 	DEFINE SECTION oZZP OF oReport TITLE "Pessoa" TABLE "ZZP" // TOTAL IN COLUMN // PAGE HEADER
-	oZZP:SetHeaderSection(.F.) // define se imprime cabeÁalho das cÈlulas na quebra de seÁ„o
-	oZZP:SetPageBreak() // define a quebra de pagina, ou seja, o resultado de cada pessoa È apresentado em p·ginas separadas
+	oZZP:SetHeaderSection(.F.) // define se imprime cabe√ßalho das c√©lulas na quebra de se√ß√£o
+	oZZP:SetPageBreak() // define a quebra de pagina, ou seja, o resultado de cada pessoa √© apresentado em p√°ginas separadas
 	
 		DEFINE CELL NAME "ZZP_IDPES" OF oZZP ALIAS "ZZP"
 		DEFINE CELL NAME "ZZP_NOME"  OF oZZP ALIAS "ZZP"
@@ -35,7 +35,7 @@ Function REL_REC()
         DEFINE CELL NAME "ZZC_DESCR"  OF oZZR ALIAS "ZZC" TITLE "Categoria"
         DEFINE CELL NAME "ZZR_VALOR"  OF oZZR ALIAS "ZZR" TITLE "Total da receita" SIZE 17
  	
- 	oZZR:Cell("ZZR_IDCAT"):Disable() //defino que a celula id de categoria n„o deve aparecer no relatorio
+ 	oZZR:Cell("ZZR_IDCAT"):Disable() //defino que a celula id de categoria n√£o deve aparecer no relatorio
  		
 	// Faz a somatoria das receitas 
 	DEFINE FUNCTION FROM oZZR:Cell("ZZR_VALOR") FUNCTION SUM
@@ -47,8 +47,8 @@ Return
 Static Function PrintReport(oReport)
 	Local cAlias := ""
 		
-	#IFDEF TOP  // SÛ passa por esse trecho quem est· utilizando banco de dados
-		cAlias := GetNextAlias()  //   Criar uma tabela tempor·ria.
+	#IFDEF TOP  // S√≥ passa por esse trecho quem est√° utilizando banco de dados
+		cAlias := GetNextAlias()  //   Criar uma tabela tempor√°ria.
 					
 		MakeSqlEXP("ZZP001")
 		
