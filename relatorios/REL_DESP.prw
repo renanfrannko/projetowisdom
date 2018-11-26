@@ -11,7 +11,7 @@ Visualização é feito com quebra por Pessoas
 /*/
 //-------------------------------------------------------------------
 
-Function REL_DESP2()
+Function REL_DESP()
 	Local oReport
 	Local oZZP
 	Local oZZD	
