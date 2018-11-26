@@ -55,7 +55,11 @@ static function ModelDef()
 
 	oModelo := MPFormModel():New( 'MDpro_meta', /*bPreValidacao*/, /*bPosValidacao*/, /*bCommit*/, /*bCancel*/ )
 
+<<<<<<< HEAD
 	oModelo:AddFields('ZZMMaster', /*cOwner*/, oStruZZM/*Estrutura*/, /*bPre */, { |oModel|  ValidCtg( oModel )}/*bPost */, /*bLoad */)
+=======
+	oModelo:AddFields('ZZMMaster', /*cOwner*/, oStruZZM/*Estrutura*/, /*bPre */, /*bPost */, /*bLoad */)
+>>>>>>> 365893b0b348260d66dd2122464f673d0e16b8bb
   oModelo:SetDescription( 'Wisdom | Metas mensais' )
 
 
@@ -79,6 +83,7 @@ Static Function ViewDef()
 	oView:EnableControlBar(.T.)
 
 Return oView
+<<<<<<< HEAD
 
 //-------------------------------------------------------------------
 
@@ -112,5 +117,9 @@ EndIf
 
 RestArea( aAreaZB1 )
 RestArea( aArea )
+=======
+
+//-------------------------------------------------------------------
+>>>>>>> 365893b0b348260d66dd2122464f673d0e16b8bb
 
 Return lRet

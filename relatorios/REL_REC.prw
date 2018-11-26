@@ -2,22 +2,23 @@
 #include 'report.ch'
 
 //-------------------------------------------------------------------
-/*/{Protheus.doc} REL_DESP
-Relatório de Listagem de Despesas x Categorias, feito em TReport
+/*/{Protheus.doc} REL_REC
+Relatório de Listagem de Receitas x Categorias, feito em TReport
 Visualização é feito com quebra por Pessoas
 @author BEATRIZ DE SOUZA, LETICIA CAMPOS, MARCIO SANTOS, RENAN FRANCO
-@since 19/11/2018
+@since 25/11/2018
 @version P1
 /*/
 //-------------------------------------------------------------------
-Function REL_DESP()
+
+Function REL_REC()
 	Local oReport
 	Local oZZP
-	Local oZZD	
+	Local oZZR	
 		
     Pergunte("ZZP001",.F.) 
     
-    DEFINE REPORT oReport NAME "Listagem de Despesas" TITLE "Relação de Despesas Cadastradas por Categorias" PARAMETER "ZZP001"; 
+    DEFINE REPORT oReport NAME "Listagem de Receitas" TITLE "Relação de Receitas Cadastradas por Categorias" PARAMETER "ZZP001"; 
        ACTION {|oReport| PrintReport(oReport)}
        
 	DEFINE SECTION oZZP OF oReport TITLE "Pessoa" TABLE "ZZP" // TOTAL IN COLUMN // PAGE HEADER
@@ -27,18 +28,22 @@ Function REL_DESP()
 		DEFINE CELL NAME "ZZP_IDPES" OF oZZP ALIAS "ZZP"
 		DEFINE CELL NAME "ZZP_NOME"  OF oZZP ALIAS "ZZP"
 		
-	DEFINE SECTION oZZD OF oZZP TITLE "Despesa" TABLE "ZZD"
+	DEFINE SECTION oZZR OF oZZP TITLE "Receita" TABLES "ZZR","ZZC"
 	
-		DEFINE CELL NAME "DESPESA"    OF oZZD TITLE "Despesas" SIZE 10
-        DEFINE CELL NAME "ZZD_NCAT"   OF oZZD ALIAS "ZZD" TITLE "Categoria"
-        DEFINE CELL NAME "ZZD_VALOR"  OF oZZD ALIAS "ZZD" TITLE "Total da Despesa" SIZE 17
- 
-	// Faz a somatoria das despesas 
-	DEFINE FUNCTION FROM oZZD:Cell("ZZD_VALOR") FUNCTION SUM
+		DEFINE CELL NAME "RECEITA"    OF oZZR TITLE "Receitas" SIZE 10
+        DEFINE CELL NAME "ZZR_IDCAT"  OF oZZR ALIAS "ZZR"
+        DEFINE CELL NAME "ZZC_DESCR"  OF oZZR ALIAS "ZZC" TITLE "Categoria"
+        DEFINE CELL NAME "ZZR_VALOR"  OF oZZR ALIAS "ZZR" TITLE "Total da receita" SIZE 17
+ 	
+ 	oZZR:Cell("ZZR_IDCAT"):Disable() //defino que a celula id de categoria não deve aparecer no relatorio
+ 		
+	// Faz a somatoria das receitas 
+	DEFINE FUNCTION FROM oZZR:Cell("ZZR_VALOR") FUNCTION SUM
              
 	oReport:HideParamPage()
 	oReport:PrintDialog()
 Return
+
 Static Function PrintReport(oReport)
 	Local cAlias := ""
 		
@@ -52,18 +57,20 @@ Static Function PrintReport(oReport)
 	BeginSQL alias cAlias
 	
 		SELECT ZZP_IDPES, ZZP_NOME,		
-			ZZD_NCAT, SUM(ZZD_VALOR) ZZD_VALOR
+			ZZC_DESCR, 
+			SUM(ZZR_VALOR) ZZR_VALOR
 			
-		FROM %table:ZZP% ZZP, %table:ZZD% ZZD
+		FROM %table:ZZP% ZZP, %table:ZZC% ZZC, %table:ZZR% ZZR
 		
-		WHERE ZZD.%notDel% AND ZZD_IDPES = ZZP_IDPES
+		WHERE ZZR.%notDel% AND ZZR_IDPES = ZZP_IDPES AND
+			  ZZR_IDCAT = ZZC_IDCAT
 		
-		GROUP BY ZZD_NCAT, ZZP_IDPES, ZZP_NOME
+		GROUP BY ZZC_DESCR, ZZP_IDPES, ZZP_NOME, ZZR_VALOR
 		
 		ORDER BY ZZP_IDPES
 		
 	EndSql
-	
+
 	END REPORT QUERY oReport:Section(1)
 	
 	oReport:Section(1):Section(1):SetParentQuery()
