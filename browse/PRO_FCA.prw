@@ -16,11 +16,15 @@ Fluxo de caixa
 
 Function PRO_FCA()
 	Local oBrowse
+
 	
 	oBrowse := FWmBrowse():New()
 	oBrowse:SetAlias( 'ZZP' )
 	oBrowse:SetDescription( 'Controle de Receita Pessoal' )
+//	oBrowse:SetFilterDefault(Pergunte('PERIODO', .T.) )
 	oBrowse:Activate()
+	
+
 
 Return NIL
 
@@ -43,6 +47,7 @@ Static Function ModelDef()
 
 	
 	oModel := MPFormModel():New( 'FLUXO', /*bPreValidacao*/, /*bPosValidacao*/, /*bCommit*/, /*bCancel*/ )
+	
 	
 	oModel:AddFields( 'ZZPMASTER', /*cOwner*/, oStruZZP )
 	
@@ -68,6 +73,7 @@ Static Function ModelDef()
 	oModel:GetModel( 'ZZDDETAIL' ):SetDescription( 'Dados das Despeas'  )
 	
 	oModel:SetVldActivate( { |oModel| PodeAtivar( oModel ) } )
+	
 
 Return oModel
 
@@ -127,3 +133,43 @@ Static Function ViewDef()
 	
 	
 Return oView
+
+Static function PodeAtivar( oModel )  
+	
+	Local aArea      := GetArea()
+	Local cQuery     := ''
+	Local cTmp       := ''
+	Local lRet       := .T.
+	Local nOperation := oModel:GetOperation()
+	
+		
+		cTmp    := GetNextAlias()
+		
+		If lRet
+		cQuery  := ""
+		cQuery  += "SELECT ZZP_IDPES FROM " + RetSqlName( 'ZZP' ) + " ZZP, "
+		cQuery  += RetSqlName( 'ZZR' ) + " ZZR, "
+		cQuery  += RetSqlName( 'ZZD' ) + " ZZD "	
+		cQuery  += " WHERE ZZP_IDPES = ZZR_IDPES "
+		cQuery  += "   AND ZZP_IDPES = ZZD_IDPES"
+		cQuery  += "   AND ZZP_IDPES = '" + ZZP->ZZP_IDPES  + "' "
+		cQuery  += "   AND ZZP.D_E_L_E_T_ = ' ' "
+					
+			dbUseArea( .T., "TOPCONN", TcGenQry( ,, cQuery ) , cTmp, .F., .T. )
+			
+			lRet := EMPTY((cTmp)->( EOF() ))
+			
+			(cTmp)->( dbCloseArea() )
+			
+		EndIf
+		
+		If !lRet
+			Help( ,, 'HELP',, 'Esta Pessoa não possui Receita ou Despesa Cadastrada.', 1, 0)
+			lRet := .F.
+		EndIf
+		
+
+	
+	RestArea( aArea )
+
+Return lRet
