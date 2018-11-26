@@ -58,7 +58,7 @@ Static Function PrintReport(oReport)
 	
 		SELECT ZZP_IDPES, ZZP_NOME,		
 			ZZC_DESCR, 
-			ZZR_VALOR
+			SUM(ZZR_VALOR) ZZR_VALOR
 			
 		FROM %table:ZZP% ZZP, %table:ZZC% ZZC, %table:ZZR% ZZR
 		
