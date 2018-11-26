@@ -3,7 +3,7 @@
 
 //-------------------------------------------------------------------
 /*/{Protheus.doc} PRO_META
-Interface para inclusão de metas financeiras por pessoas
+Interface para inclusão de metas financeiras por período mensal
 
 @author RENAN FRANCO
 @since 16/11/2018
@@ -12,37 +12,37 @@ Interface para inclusão de metas financeiras por pessoas
 //-------------------------------------------------------------------
 function pro_meta()
 
-	Local aTamanho := FWGetDialogSize ( oMainWnd )
-	private oJanela
+	Local oBrowse
 
-	Define MsDialog oJanela Title 'Controle de Metas Financeiras' From aTamanho[1], aTamanho[2] to aTamanho[3], aTamanho[4] pixel
+	oBrowse := FWmBrowse():New()
+	oBrowse:SetAlias( 'ZZM' )
+	oBrowse:SetDescription( 'Wisdom | Metas mensais' )
+	oBrowse:Activate()
 
-	oFWLayer := FWLayer():New()
-	oFWLayer:Init(oJanela, .F., .T.)
+	// Local aTamanho := FWGetDialogSize ( oMainWnd )
+	// private oJanela
 
-	oFwLayer:AddLine('CIMA', 70, .F.)
-	oFWLayer:AddCollumn('PESSOAS', 100, .T., 'CIMA')
+	// Define MsDialog oJanela Title 'Controle de Metas Financeiras' From aTamanho[1], aTamanho[2] to aTamanho[3], aTamanho[4] pixel
 
-	oFWLayer:AddLine('BAIXO', 30, .F.)
-	oFWLayer:AddCollumn('METAS' , 100, .T., 'BAIXO')
+	// oFWLayer := FWLayer():New()
+	// oFWLayer:Init(oJanela, .F., .T.)
 
-	oCima := OFWLayer:GetColPanel('PESSOAS', 'CIMA')
+	// oFwLayer:AddLine('CIMA', 100, .F.)
+	// oFWLayer:AddCollumn('CIMAESQ', 100, .T., 'CIMA')
+	
+	// oPainelEsq 	:= OFWLayer:GetColPanel('CIMAESQ', 'CIMA')
 
-	oBBaixo := FWmBrowse():New()  // Cria um novo browse
-	oBBaixo:SetOwner(oCima)
-	oBBaixo:SetAlias('ZZM') // Define o banco que ser� utilizado
-	oBBaixo:SetDescription("Wisdom | Metas x Pessoas ") // Descri��o do Browse
-	oBBaixo:SetMenuDef( 'pro_meta' )          // Define de onde virao os botoes deste browse
-	oBBaixo:SetProfileID( 'metas' )
-	oBBaixo:DisableDetails()
-	oBBaixo:Activate()  // Ativa o Browser
+	// oBrowseEsq := FWmBrowse():New()  
+	// oBrowseEsq:SetOwner(oPainelEsq)
+	// oBrowseEsq:SetAlias('ZZM') 
+	// oBrowseEsq:SetDescription("Wisdom | Metas mensais") 
+	// oBrowseEsq:SetMenuDef( 'pro_meta' )       
+	// oBrowseEsq:SetProfileID( 'metas' )
+	// oBrowseEsq:DisableDetails()
 
-//
-//	oRelacZZM := FWBrwRelation():New()
-//	oRelacZZM:AddRelation(oBCima, oBBaixo, { { 'ZZM_FILIAL', 'xFilial("ZZM")' }, {'ZZM_IDPES', 'ZZP_IDPES'} })
-//	oRelacZZM:Activate()
+	// oBrowseEsq:Activate()  // Ativa o Browser
 
-	Activate MsDialog oJanela center
+	// Activate MsDialog oJanela center
 
 return NIL
 //-------------------------------------------------------------------
@@ -82,15 +82,15 @@ static function ModelDef()
 
 	oModelo:AddFields('ZZMMaster', /*cOwner*/, oStruZZM/*Estrutura*/, /*bPre */, /*bPost */, /*bLoad */)
 
+	oModelo:SetDescription( 'Wisdom | Metas mensais' )
+
 
 return oModelo
 
 //-----------------------------------------------------------View do exerc�cio 04---------------------------------------------------
 Static Function ViewDef()
 
-	Local oStruZZP := FWFormStruct(2, 'ZZP', )
 	Local oStruZZM := FWFormStruct(2, 'ZZM', )
-
 	Local oModelo := FWLoadModel('pro_meta')
 
 	Local oView
@@ -99,12 +99,8 @@ Static Function ViewDef()
 	oView:setModel( oModelo ) // Model de dados usado
 
 	oView:AddField('VIEW_ZZM', oStruZZM, 'ZZMMaster')
-
-	oView:CreateHorizontalBox('TELA_1', 40) // Cria tela horizontal e define o espa�o de tela usado %
-	oView:CreateHorizontalBox('TELA_2', 60) // Cria tela horizontal e define o espa�o de tela usado %
-
-	oView:setOwnerView('VIEW_ZZM', 'TELA_1') // Associa o FormField a tela definida acima
-
+	oView:CreateHorizontalBox('TELA_1', 100) 
+	oView:setOwnerView('VIEW_ZZM', 'TELA_1') 
 	oView:EnableTitleView('VIEW_ZZM','METAS')
 	oView:EnableControlBar(.T.)
 
