@@ -10,7 +10,6 @@ Visualização é feito com quebra por Pessoas
 @version P1
 /*/
 //-------------------------------------------------------------------
-
 Function REL_DESP()
 	Local oReport
 	Local oZZP
@@ -40,7 +39,6 @@ Function REL_DESP()
 	oReport:HideParamPage()
 	oReport:PrintDialog()
 Return
-
 Static Function PrintReport(oReport)
 	Local cAlias := ""
 		
@@ -54,13 +52,13 @@ Static Function PrintReport(oReport)
 	BeginSQL alias cAlias
 	
 		SELECT ZZP_IDPES, ZZP_NOME,		
-			ZZD_NCAT, ZZD_VALOR
+			ZZD_NCAT, SUM(ZZD_VALOR) ZZD_VALOR
 			
 		FROM %table:ZZP% ZZP, %table:ZZD% ZZD
 		
 		WHERE ZZD.%notDel% AND ZZD_IDPES = ZZP_IDPES
 		
-		GROUP BY ZZD_NCAT, ZZP_IDPES, ZZP_NOME, ZZD_VALOR
+		GROUP BY ZZD_NCAT, ZZP_IDPES, ZZP_NOME
 		
 		ORDER BY ZZP_IDPES
 		
