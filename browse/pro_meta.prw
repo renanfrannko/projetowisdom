@@ -10,8 +10,6 @@ Interface para inclusão de metas financeiras por período mensal
 @version P1
 /*/
 //-------------------------------------------------------------------
-
-//-------------------------------------------------------------------
 function pro_meta()
 
 	Local oBrowse
@@ -39,7 +37,7 @@ static function MenuDef()
 		//                                             Model   Identificador  ID Model
 		aRotUser := ExecBlock( 'pro_meta', .F., .F., { NIL,    "MENUDEF",     'pro_meta' } )     // Executa ponto de entrada
 
-		If ValType (aRotUser) == "A"   // Confirma se o ponto de entrada � Array
+		If ValType (aRotUser) == "A"   
 			aEval ( aRotUser, { | aX| aAdd(aRotina, aX) })
 		EndIf
 
@@ -54,13 +52,8 @@ static function ModelDef()
 	Local oStruZZM := FWFormStruct(1, 'ZZM', , )
 
 	oModelo := MPFormModel():New( 'MDpro_meta', /*bPreValidacao*/, /*bPosValidacao*/, /*bCommit*/, /*bCancel*/ )
-
-<<<<<<< HEAD
 	oModelo:AddFields('ZZMMaster', /*cOwner*/, oStruZZM/*Estrutura*/, /*bPre */, { |oModel|  ValidCtg( oModel )}/*bPost */, /*bLoad */)
-=======
-	oModelo:AddFields('ZZMMaster', /*cOwner*/, oStruZZM/*Estrutura*/, /*bPre */, /*bPost */, /*bLoad */)
->>>>>>> 365893b0b348260d66dd2122464f673d0e16b8bb
-  oModelo:SetDescription( 'Wisdom | Metas mensais' )
+	oModelo:SetDescription( 'Wisdom | Metas mensais' )
 
 
 return oModelo
@@ -83,9 +76,6 @@ Static Function ViewDef()
 	oView:EnableControlBar(.T.)
 
 Return oView
-<<<<<<< HEAD
-
-//-------------------------------------------------------------------
 
 //-------------------------------------------------------------------
 Static Function ValidCtg( oModelF )
@@ -95,31 +85,28 @@ Local nOperation := oModel:GetOperation()
 Local aArea      := GetArea()
 Local aAreaZB1   := ZZM->( GetArea() )
 
- ZZM->( dbGoTop())
+ZZM->( dbGoTop())
 
 if nOperation == 3
 
-		IF ZZM->( dbSeek(xFilial("ZZM") + ZZM->ZZM_IDPES ) )
-			if ZZM->ZZM_IDCAT == M->ZZM_IDCAT .AND. ZZM->ZZM_IDPES = M->ZZM_IDPES
-				lRet := .F.
-				Help( ,, 'Help',, 'Consta meta cadastrada nessa categoria para esse perfil', 1, 0 )
-			EndIf
+	IF ZZM->( dbSeek(xFilial("ZZM") + ZZM->ZZM_IDPES ) )
+		if ZZM->ZZM_IDCAT == M->ZZM_IDCAT .AND. ZZM->ZZM_IDPES == M->ZZM_IDPES
+			lRet := .F.
+			Help( ,, 'Help',, 'Consta meta cadastrada nessa categoria para esse perfil', 1, 0 )
+		EndIf
+		
+		if SubStr( DTOC(ZZM->ZZM_DATA) , 3,3) == SubStr( DTOC(M->ZZM_DATA) , 3,3) .AND. ZZM->ZZM_IDPES == M->ZZM_IDPES
+			lRet := .F.
+			Help( ,, 'Help',, 'Consta meta cadastrada no mês informado para esse perfil', 1, 0 )
+		EndIf
 
-			if SubStr( DTOC(ZZM->ZZM_DATA) , 3,3) == SubStr( DTOC(M->ZZM_DATA) , 3,3) .AND. ZZM->ZZM_IDPES = M->ZZM_IDPES
-				lRet := .F.
-				Help( ,, 'Help',, 'Consta meta cadastrada no mês informado para esse perfil', 1, 0 )
-			EndIf
-
-		endif
-
+	endif
 
 EndIf
 
 RestArea( aAreaZB1 )
 RestArea( aArea )
-=======
-
-//-------------------------------------------------------------------
->>>>>>> 365893b0b348260d66dd2122464f673d0e16b8bb
 
 Return lRet
+
+//-------------------------------------------------------------------
